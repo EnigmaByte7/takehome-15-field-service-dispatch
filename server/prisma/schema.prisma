@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +5,112 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Role {
+  dispatcher
+  technician
+}
+
+enum Priority {
+  low
+  medium
+  high
+  urgent
+}
+
+enum JobStatus {
+  unassigned
+  assigned
+  en_route
+  on_site
+  completed
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+
+  assignments   Assignment[]
+  partsRecorded PartUsed[]
+  jobEvents     JobEvent[]
+}
+
+model Job {
+  id                       String    @id @default(uuid())
+  customerName             String
+  siteAddress              String
+  description              String
+  priority                 Priority
+  scheduledDate            DateTime  @db.Date
+  startTime                DateTime  @db.Time
+  estimatedDurationMinutes Int
+  status                   JobStatus @default(unassigned)
+  completionNote           String?
+  archivedAt               DateTime?
+  createdAt                DateTime  @default(now())
+
+  assignments Assignment[]
+  partsUsed   PartUsed[]
+  events      JobEvent[]
+  alerts      Alert[]
+
+  @@index([status, scheduledDate])
+}
+
+model Assignment {
+  id           String    @id @default(uuid())
+  jobId        String
+  technicianId String
+  createdAt    DateTime  @default(now())
+  removedAt    DateTime?
+
+  job        Job  @relation(fields: [jobId], references: [id])
+  technician User @relation(fields: [technicianId], references: [id])
+
+  @@index([technicianId, removedAt])
+}
+
+model PartUsed {
+  id           String   @id @default(uuid())
+  jobId        String
+  partName     String
+  quantity     Int
+  recordedById String
+  createdAt    DateTime @default(now())
+
+  job        Job  @relation(fields: [jobId], references: [id])
+  recordedBy User @relation(fields: [recordedById], references: [id])
+}
+
+model JobEvent {
+  id        String   @id @default(uuid())
+  jobId     String
+  eventType String
+  oldValue  String?
+  newValue  String?
+  actorId   String
+  createdAt DateTime @default(now())
+
+  job   Job  @relation(fields: [jobId], references: [id])
+  actor User @relation(fields: [actorId], references: [id])
+
+  @@index([jobId, createdAt])
+}
+
+model Alert {
+  id               String    @id @default(uuid())
+  jobId            String
+  createdAt        DateTime  @default(now())
+  dismissedAt      DateTime?
+  reappearedFromId String?
+
+  job            Job     @relation(fields: [jobId], references: [id])
+  reappearedFrom Alert?  @relation("AlertReappear", fields: [reappearedFromId], references: [id])
+  reappearedAs   Alert[] @relation("AlertReappear")
+
+  @@index([jobId, dismissedAt])
 }
