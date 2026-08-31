@@ -35,7 +35,7 @@ The Stack
  
 im going to keep it simple but effective,
 
-Frontend: ReactJS + Tailwind , simple reusable components
+Frontend: ReactJS + Tailwind , simple reusable components, React Query for client side caching and state handline
 Backend: Node + ExpressJS
 DB: PostgreSQL (NeonDB), the data is relational in nature, like there is many-to many mappings, and constraints
 ORM: Prisma for ORM and migrations

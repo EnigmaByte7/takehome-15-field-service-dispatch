@@ -8,7 +8,7 @@ Answer each of these, in your own words.
 - What did you deliberately denormalise?
 - What would break first if this had 100x the data? -->
 
-Tables
+## Tables
 
 starting with tables, i can think of these right now... 
 
@@ -70,7 +70,7 @@ created_at: timestamp
 dismissed_at: timestamp, nullable
 
 
-Relationships: 
+## Relationships: 
 1. most importatn relation as we can already tell from the ps, is the many to many relation of techie and jobs.. each techie can have multiple jobs for a day (non overlapping)
 and each job can have more than one techies too, so to handle this, we are createing a "Assignment" table, so we dont have to write join queires again and again, 
 also in this way we can also store thgings like created_at and updated_at for the assignment in this table only... which makes it more natural
@@ -86,11 +86,11 @@ db vs app level constraints
 2. but things like job complettion requiring a note or a part used, or the job status transition from Unassigned to Completed and there should not be any skipping or illegal
    movement must be handled as part of business logic only
 
-Denormalizing
+## Denormalizing
 
 Yet to think on this
 
-What can break over scaling
+## What can break over scaling
 
 one thing im certain is the sorting/filtering/paging logic requires a lot of interaction with db and queries, so there is a possiblity of it breaking, unless we employ
 particular indexing etc
