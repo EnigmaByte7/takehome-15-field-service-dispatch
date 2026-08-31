@@ -28,3 +28,57 @@ top 10 goals, i have to take care of,
 9. bulk assigning (5,6 must be upheld)
 10. every job has a history / timeline that gets updated with each action of techie/dispatcher, like creating job, assigning, or changing status by techie etc...
 this timeline MUST be IMMUTABLE
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The Stack
+ 
+im going to keep it simple but effective,
+
+Frontend: ReactJS + Tailwind , simple reusable components
+Backend: Node + ExpressJS
+DB: PostgreSQL (NeonDB), the data is relational in nature, like there is many-to many mappings, and constraints
+ORM: Prisma for ORM and migrations
+Auth: JWT to handle role based control and auth
+Hosting: DB on Neon, Frontend on Vercel and Backend on Express
+Tools: postman for api testing, claude code cli (with gemini as backend) for productivity
+
+Order of building i expect :
+
+1. DB Setup and schema (est : 2 hr)
+   Having all tables and db ready will help keep track of the core app logic and data layer
+   so if some change is required in db, it can be done early otherwise later it can become problematic
+
+2. Set up the Auth and roles (est 2 hr)
+    Next i can sort out the auth and jwt, this way we can make sure that we already have a seperation of ui and logic in frontend and backend from the start
+    Right now i can keep it simple, email + password (bcrypt), verification or otps etc is not a requirement
+
+3. Jobs CRUD and parts (est 2 hr)
+    this one is simple, we create apis for dispatcher to create jobs, classic rest apis nothing fancy, just we have to test it using postman before integration
+    and make sure the roles are enforced properly,
+
+4. the no double booking (est 2 hr)
+    this is the main core requirement... the logic in itself is not difficult , we have to make sure the job must not overlap with another assigned job.., 
+    but we have to ensure its atomic in execution and no race condition should happen here.... i can think of transactions in db and locking mechanisms right now..
+    possibly it can change too...
+
+5.event log of jobs (est 1.5 hr)
+    apis for updating job status , no skipping is allowed, and for a job to complete, a part must be used and a reson be specified, no editing allowed on this table 
+    after a record is addded here
+
+6. searching/filtering/pagination/sorting (est 2.5hr)
+    on the jobs list for the dispatcher ,has to be done in the backend not on frontend, indexing on db can help make these operations quick
+
+7. bulk assigning and csv export (est 2 hr)
+   bulk assigning, multiple jobs to the same techie, making sure no double booking happens, we have to avoid N + 1 problem here, 
+
+8. dashboard (est 2 hr)
+  apis to get stats like assigned, unassigned counts, running lates etc
+
+9. alerts (est 1.5 hr)
+    alerts for late runnning jobs, when the scheduled ending is already passed. we also have to add a dismissed_at to keep track of when a alert was dismissed by techie
+
+10. seed, test, deploy (est 2.5 hr)
+    at last, we can seed test data, and test it manually and maybe write some tests if time is left... and finally deploy
+
+i will keep making changes to the plan, and also add outcomes of each session as i progress
