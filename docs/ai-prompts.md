@@ -23,3 +23,11 @@ On the frontend I'm using TanStack Query and React, so structure it around that 
 "
 Got: got a scafolld.sh with the desired folder structure
 Corrections: no corrections requiredn at the moment, possibly later
+
+Goal: 2. Creating seeding script for db
+Prompt : 
+"
+    Prepare a seeding script for our database to insert users of both roles 'technician' and 'dispatcher', with hashed password (known), find context of user schema @schema.md
+"
+Got: got @src/db/seed.ts file
+Corrections: ai was unable to get the connection db client code correct, as this one is the prisma latest version 7,and right now llm had no info about that, so i had to manually correct it by referring to the docs at 'https://www.prisma.io/docs/orm/v7/prisma-client/setup-and-configuration/introduction'

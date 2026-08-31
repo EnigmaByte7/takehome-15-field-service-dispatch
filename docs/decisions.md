@@ -13,9 +13,9 @@ below, not necessarily the last one; add a **Later reversed:** line to whichever
 
 ## Decision 2
 
-- **Chose:**
-- **Rejected:**
-- **Why:**
+- **Chose:**: jwt vs session based auth, i chose the jwt, 
+- **Rejected:** : not using session tokens here
+- **Why:**: jwt tokens are stateless, server dont have to maintain a copy of the token in db.. which means less data to store and less moving parts and logic.. making things simpler, the tokens can be set into cookies or as localstorage or session storage inthe browser
 
 ## Decision 3
 
