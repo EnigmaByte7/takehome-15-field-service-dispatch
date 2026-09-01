@@ -36,12 +36,15 @@ created_at: timestamp
 
 Assignment
 this is a crucial table,  this is the join table between users and jobs
+update : added attributes for window start and window end, and added exclude constraint on this table too.. to check for overlap constraint
 
 id: uuid, PK
 job_id: uuid, FK → Job
 technician_id: uuid, FK → User
 created_at: timestamp
 removed_at: timestamp, nullable
+windowStart:  DateTime
+windowEnd:   DateTime
 
 PartUsed
 

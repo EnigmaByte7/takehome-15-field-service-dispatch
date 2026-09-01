@@ -65,6 +65,8 @@ model Assignment {
   id           String    @id @default(uuid())
   jobId        String
   technicianId String
+  windowStart  DateTime
+  windowEnd    DateTime
   createdAt    DateTime  @default(now())
   removedAt    DateTime?
 

@@ -31,3 +31,11 @@ Prompt :
 "
 Got: got @src/db/seed.ts file
 Corrections: ai was unable to get the connection db client code correct, as this one is the prisma latest version 7,and right now llm had no info about that, so i had to manually correct it by referring to the docs at 'https://www.prisma.io/docs/orm/v7/prisma-client/setup-and-configuration/introduction'
+
+
+Goal 3: to research about EXCLUDE constraint in pg, and get more ideas about preventing race conditions in pg
+Prompt :
+"
+    Tell me the solutions about how to prevent race conditions in postgresql, and also about exclude constraint
+"
+got: got a info about different isolation levels in pg, select..for..update method  (pessimistic locking), atomic single queries and exclude constraint, i googled too
