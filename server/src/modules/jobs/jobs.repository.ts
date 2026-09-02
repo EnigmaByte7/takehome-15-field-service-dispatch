@@ -1,4 +1,5 @@
 import { prisma } from '../../db/client.js';
+import { Prisma } from '../../generated/prisma/client.js';
 
 export function createJob(data: {
   customerName: string;
@@ -47,24 +48,23 @@ export function setArchived(id: string, archivedAt: Date | null) {
   return prisma.job.update({ where: { id }, data: { archivedAt } });
 }
 
-export function listAllJobs(includeArchived: boolean) {
+export function findJobs(
+  where: Prisma.JobWhereInput,
+  orderBy: Prisma.JobOrderByWithRelationInput,
+  skip: number,
+  take: number
+) {
   return prisma.job.findMany({
-    where: includeArchived ? {} : { archivedAt: null },
+    where,
+    orderBy,
+    skip,
+    take,
     include: {
       assignments: { where: { removedAt: null }, include: { technician: true } },
     },
-    orderBy: { scheduledDate: 'asc' },
   });
 }
 
-export function listJobsForTechnician(technicianId: string) {
-  return prisma.job.findMany({
-    where: {
-      assignments: { some: { technicianId, removedAt: null } },
-    },
-    include: {
-      assignments: { where: { removedAt: null }, include: { technician: true } },
-    },
-    orderBy: { scheduledDate: 'asc' },
-  });
+export function countJobs(where: Prisma.JobWhereInput) {
+  return prisma.job.count({ where });
 }

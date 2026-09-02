@@ -39,3 +39,21 @@ Prompt :
     Tell me the solutions about how to prevent race conditions in postgresql, and also about exclude constraint
 "
 got: got a info about different isolation levels in pg, select..for..update method  (pessimistic locking), atomic single queries and exclude constraint, i googled too
+
+
+Goal 4: to quickly implement the assignment module, i took help from claude code, as i have already mentioned our research andplan we used behind the logic in @plan.md
+Prompt":
+"
+    Take context from @plan.md and implement @src/modules/assignment based on the plan mentioned in the context, for schema information refer to @prisma/schema.prisma
+"
+got: got assignments modules done
+corrections: missing types and some ts related issues
+
+Goal 5: Server-side search, filter, sort, pagination on the job list
+prompt : 
+"
+ replace the placeholder job list with the actual requirement 6 — text search,
+status/technician/date filters, sorting, pagination with a total count, all server-side.
+"
+outcome: got working implementation for the filter operations
+corrections: ts errors , it was rejecting undefined in the filters object 

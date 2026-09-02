@@ -90,9 +90,12 @@ Order of building i expect :
     apis for updating job status , no skipping is allowed, and for a job to complete, a part must be used and a reson be specified, no editing allowed on this table 
     after a record is addded here
 
+    done, ,, in line with the requirement, i have not added any update or delete apis for the the events, so its immutable at app level, there is no direct way to delete or update a event log for any role once its added to timeline
+
 1. searching/filtering/pagination/sorting (est 2.5hr)
     on the jobs list for the dispatcher ,has to be done in the backend not on frontend, indexing on db can help make these operations quick
 
+    done, used claude code to speed up the process, updated old list methods in job.repository has filter options based on search, status, technicianid, date, sortingby, sorting order, pagination, page size, and include or exclude archives (soft deletes)
 2. bulk assigning and csv export (est 2 hr)
    bulk assigning, multiple jobs to the same techie, making sure no double booking happens, we have to avoid N + 1 problem here, 
 
