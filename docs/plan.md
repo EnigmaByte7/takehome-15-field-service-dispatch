@@ -92,20 +92,23 @@ Order of building i expect :
 
     done, ,, in line with the requirement, i have not added any update or delete apis for the the events, so its immutable at app level, there is no direct way to delete or update a event log for any role once its added to timeline
 
-1. searching/filtering/pagination/sorting (est 2.5hr)
+6. searching/filtering/pagination/sorting (est 2.5hr)
     on the jobs list for the dispatcher ,has to be done in the backend not on frontend, indexing on db can help make these operations quick
 
     done, used claude code to speed up the process, updated old list methods in job.repository has filter options based on search, status, technicianid, date, sortingby, sorting order, pagination, page size, and include or exclude archives (soft deletes)
-2. bulk assigning and csv export (est 2 hr)
+7. bulk assigning and csv export (est 2 hr)
    bulk assigning, multiple jobs to the same techie, making sure no double booking happens, we have to avoid N + 1 problem here, 
 
-3. dashboard (est 2 hr)
+8. dashboard (est 2 hr)
   apis to get stats like assigned, unassigned counts, running lates etc
 
-1. alerts (est 1.5 hr)
+  update: 
+  for dashbaord , i have findbystatus, find unassigned, assigned, find by techninician id, and find all from some day this one is greate, here i used raw sql queries as in prisam we cant directly truncate a timestamp into day, and without that we wont be able to use group by on the desired day, also refer ti the comment i wrote in the dashboard/repository to understand
+
+9. alerts (est 1.5 hr)
     alerts for late runnning jobs, when the scheduled ending is already passed. we also have to add a dismissed_at to keep track of when a alert was dismissed by techie
 
-2.  seed, test, deploy (est 2.5 hr)
+10.  seed, test, deploy (est 2.5 hr)
     at last, we can seed test data, and test it manually and maybe write some tests if time is left... and finally deploy
 
 i will keep making changes to the plan, and also add outcomes of each session as i progress
