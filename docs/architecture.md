@@ -6,3 +6,6 @@ Answer each of these, in your own words, once the system has taken real shape.
 - Where does each piece run?
 - What is the request path for one representative user action, end to end?
 - What did you decide *not* to build, and why?
+
+
+i will soon update the architecutre and explain each module here, once little bit bugs are resolved
