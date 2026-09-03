@@ -112,5 +112,6 @@ Order of building i expect :
     at last, we can seed test data, and test it manually and maybe write some tests if time is left... and finally deploy
 
 11. integrate with client side
+update: added a new module users to get technicians details for thhe frontend
 
 i will keep making changes to the plan, and also add outcomes of each session as i progress

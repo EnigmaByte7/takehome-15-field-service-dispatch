@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getJob, getTimeline, transitionStatus, addPart, assignTechnician } from '../api/jobs';
+import { getTechnicians } from '../api/users';
 import { useAuth } from '../context/AuthContext';
 
 const NEXT_STATUS = {
@@ -28,6 +29,12 @@ export default function JobDetailPage() {
   const { data: timeline } = useQuery({
     queryKey: ['timeline', id],
     queryFn: () => getTimeline(id),
+  });
+
+  const { data: technicians } = useQuery({
+    queryKey: ['technicians'],
+    queryFn: getTechnicians,
+    enabled: user?.role === 'dispatcher',
   });
 
   function refresh() {
@@ -99,12 +106,16 @@ export default function JobDetailPage() {
       {user?.role === 'dispatcher' && (
         <div className="border rounded p-4 space-y-2">
           <h2 className="font-medium">Assign Technician</h2>
-          <input
-            placeholder="Technician ID"
+          <select
             value={technicianId}
             onChange={(e) => setTechnicianId(e.target.value)}
             className="border rounded px-2 py-1 w-full"
-          />
+          >
+            <option value="">Select a technician</option>
+            {technicians?.map((t) => (
+              <option key={t.id} value={t.id}>{t.email}</option>
+            ))}
+          </select>
           <button onClick={handleAssign} className="bg-blue-600 text-white px-3 py-1 rounded">
             Assign
           </button>
