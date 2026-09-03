@@ -111,4 +111,6 @@ Order of building i expect :
 10.  seed, test, deploy (est 2.5 hr)
     at last, we can seed test data, and test it manually and maybe write some tests if time is left... and finally deploy
 
+11. integrate with client side
+
 i will keep making changes to the plan, and also add outcomes of each session as i progress

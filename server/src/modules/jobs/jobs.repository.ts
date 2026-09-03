@@ -1,4 +1,4 @@
-import { prisma } from '../../db/client.js';
+import { prisma}from '../../db/client.js';
 import { Prisma } from '../../generated/prisma/client.js';
 
 export function createJob(data: {
@@ -67,4 +67,14 @@ export function findJobs(
 
 export function countJobs(where: Prisma.JobWhereInput) {
   return prisma.job.count({ where });
+}
+
+export function findJobsByDate(date: Date) {
+  return prisma.job.findMany({
+    where: { scheduledDate: date, archivedAt: null },
+    include: {
+      assignments: { where: { removedAt: null }, include: { technician: true } },
+    },
+    orderBy: { startTime: 'asc' },
+  });
 }
