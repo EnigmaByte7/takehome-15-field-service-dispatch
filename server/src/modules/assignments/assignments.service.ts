@@ -1,4 +1,4 @@
-import { prisma } from '../../prisma/client.js';
+import { prisma } from '../../db/client.js';
 import * as repo from './assignments.repository.js';
 import { getWindow, windowsOverlap } from '../../lib/dateOverlap.js';
 import { recordEvent } from '../events/events.service.js';

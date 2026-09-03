@@ -1,8 +1,9 @@
 import { prisma } from '../../db/client.js';
+import { Prisma } from '../../generated/prisma/client.js';
 import { createEvent, listEventsForJob, findJobForVisibilityCheck } from './events.repository.js';
 
 type Actor = { userId: string; role: 'dispatcher' | 'technician' };
-type Client =  typeof prisma;
+type Client = Prisma.TransactionClient | typeof prisma;
 
 export function recordEvent(
   jobId: string,
@@ -12,16 +13,7 @@ export function recordEvent(
   newValue?: string | null,
   client: Client = prisma
 ) {
-  return createEvent(
-  {
-    jobId,
-    eventType,
-    actorId,
-    ...(oldValue !== undefined && { oldValue }),
-    ...(newValue !== undefined && { newValue }),
-  },
-  client
-);
+  return createEvent({ jobId, eventType, actorId, oldValue, newValue }, client);
 }
 
 export async function getTimeline(actor: Actor, jobId: string) {

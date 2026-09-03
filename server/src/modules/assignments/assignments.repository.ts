@@ -1,6 +1,7 @@
 import { prisma } from '../../db/client.js';
+import { Prisma } from '../../generated/prisma/client.js';
 
-type Client = typeof prisma;
+type Client = Prisma.TransactionClient | typeof prisma;
 
 export function findJobForAssignment(jobId: string, client: Client = prisma) {
   return client.job.findUnique({ where: { id: jobId } });

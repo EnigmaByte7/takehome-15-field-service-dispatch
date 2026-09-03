@@ -1,5 +1,8 @@
-import { prisma}from '../../db/client.js';
+import { prisma } from '../../db/client.js';
 import { Prisma } from '../../generated/prisma/client.js';
+import type { JobStatus } from './jobs.transitions.js';
+
+type Client = Prisma.TransactionClient | typeof prisma;
 
 export function createJob(data: {
   customerName: string;
@@ -13,8 +16,8 @@ export function createJob(data: {
   return prisma.job.create({ data });
 }
 
-export function findJobById(id: string) {
-  return prisma.job.findUnique({
+export function findJobById(id: string, client: Client = prisma) {
+  return client.job.findUnique({
     where: { id },
     include: {
       assignments: { where: { removedAt: null }, include: { technician: true } },
@@ -76,5 +79,17 @@ export function findJobsByDate(date: Date) {
       assignments: { where: { removedAt: null }, include: { technician: true } },
     },
     orderBy: { startTime: 'asc' },
+  });
+}
+
+export function updateStatus(
+  id: string,
+  status: JobStatus,
+  completionNote: string | undefined,
+  client: Client = prisma
+) {
+  return client.job.update({
+    where: { id },
+    data: { status, ...(completionNote ? { completionNote } : {}) },
   });
 }

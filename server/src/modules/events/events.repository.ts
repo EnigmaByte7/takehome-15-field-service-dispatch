@@ -1,12 +1,18 @@
 import { prisma } from '../../db/client.js';
+import { Prisma } from '../../generated/prisma/client.js';
 
-export function createEvent(data: {
-  jobId: string;
-  eventType: string;
-  oldValue?: string | null;
-  newValue?: string | null;
-  actorId: string;
-}, client = prisma) {
+type Client = Prisma.TransactionClient | typeof prisma;
+
+export function createEvent(
+  data: {
+    jobId: string;
+    eventType: string;
+    oldValue?: string | null;
+    newValue?: string | null;
+    actorId: string;
+  },
+  client: Client = prisma
+) {
   return client.jobEvent.create({ data });
 }
 

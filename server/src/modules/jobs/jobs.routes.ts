@@ -8,18 +8,23 @@ import {
   updateJobController,
   archiveJobController,
   restoreJobController,
+  exportDayController,
+  transitionStatusController,
 } from './jobs.controller.js';
 
 const router = Router();
 
 router.use(authMiddleware);
 
+router.get('/export', requireRole('dispatcher'), exportDayController);
+
 router.get('/', listJobsController);
-router.get('/:id', getJobController);
+router.get('/:jobId', getJobController);
 
 router.post('/', requireRole('dispatcher'), createJobController);
-router.patch('/:id', requireRole('dispatcher'), updateJobController);
-router.post('/:id/archive', requireRole('dispatcher'), archiveJobController);
-router.post('/:id/restore', requireRole('dispatcher'), restoreJobController);
+router.patch('/:jobId', requireRole('dispatcher'), updateJobController);
+router.post('/:jobId/archive', requireRole('dispatcher'), archiveJobController);
+router.post('/:jobId/restore', requireRole('dispatcher'), restoreJobController);
+router.patch('/:jobId/status', requireRole('technician'), transitionStatusController);
 
 export default router;

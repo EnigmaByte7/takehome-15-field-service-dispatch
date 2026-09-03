@@ -41,9 +41,9 @@ export async function createJobController(req: AuthedRequest, res: Response) {
 
 export async function getJobController(req: AuthedRequest, res: Response) {
   const actor = req.user!;
+  const { jobId } = req.params;
+  if (typeof jobId !== 'string') return res.status(400).json({ error: 'Invalid job id' });
 
-  const {jobId} = req.params
-  if(typeof jobId != 'string') return res.status(400).json({error: "Invalid job id"})
   const job = await jobsService.getJob(actor, jobId);
 
   if (job === null) return res.status(404).json({ error: 'Job not found' });
@@ -72,26 +72,52 @@ export async function listJobsController(req: AuthedRequest, res: Response) {
 }
 
 export async function updateJobController(req: AuthedRequest, res: Response) {
-  const {jobId} = req.params
-  if(typeof jobId != 'string') return res.status(400).json({error: "Invalid job id"})
-  const updated = await jobsService.updateJobDetails(jobId  , req.body);
+  const { jobId } = req.params;
+  if (typeof jobId !== 'string') return res.status(400).json({ error: 'Invalid job id' });
+
+  const updated = await jobsService.updateJobDetails(jobId, req.body);
   return res.status(200).json(updated);
 }
 
 export async function archiveJobController(req: AuthedRequest, res: Response) {
   const actor = req.user!;
+  const { jobId } = req.params;
+  if (typeof jobId !== 'string') return res.status(400).json({ error: 'Invalid job id' });
 
-  const {jobId} = req.params
-  if(typeof jobId != 'string') return res.status(400).json({error: "Invalid job id"})
   const job = await jobsService.archiveJob(actor, jobId);
   return res.status(200).json(job);
 }
 
 export async function restoreJobController(req: AuthedRequest, res: Response) {
   const actor = req.user!;
+  const { jobId } = req.params;
+  if (typeof jobId !== 'string') return res.status(400).json({ error: 'Invalid job id' });
 
-  const {jobId} = req.params
-  if(typeof jobId != 'string') return res.status(400).json({error: "Invalid job id"})
   const job = await jobsService.restoreJob(actor, jobId);
   return res.status(200).json(job);
+}
+
+export async function exportDayController(req: AuthedRequest, res: Response) {
+  const date = req.query.date as string;
+  if (!date) return res.status(400).json({ error: 'date query param is required, e.g. ?date=2026-09-05' });
+
+  const csv = await jobsService.exportDaySheet(date);
+
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename="dispatch-${date}.csv"`);
+  return res.status(200).send(csv);
+}
+
+export async function transitionStatusController(req: AuthedRequest, res: Response) {
+  const actor = req.user!;
+  const { jobId } = req.params;
+  if (typeof jobId !== 'string') return res.status(400).json({ error: 'Invalid job id' });
+
+  const { status, completionNote } = req.body;
+  if (!status) return res.status(400).json({ error: 'status is required' });
+
+  const result = await jobsService.transitionStatus(actor, jobId, status, completionNote);
+
+  if (!result.success) return res.status(409).json({ error: result.reason });
+  return res.status(200).json({ success: true });
 }
