@@ -118,6 +118,9 @@ Order of building i expect :
 10.  seed, test, deploy (est 2.5 hr)
     at last, we can seed test data, and test it manually and maybe write some tests if time is left... and finally deploy
 
+    update:
+    deployed /server on render and /client onto vercel
+
 11. integrate with client side
 update: added a new module users to get technicians details for thhe frontend
 
