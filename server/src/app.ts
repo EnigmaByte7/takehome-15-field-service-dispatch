@@ -21,4 +21,7 @@ app.use('/api/jobs/:jobId/events', eventsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/users/', technicianRoutes);
 
+//added a health endpoint
+app.get('/', (req, res) => res.status(200).send("Server Running..."))
+
 export default app;
