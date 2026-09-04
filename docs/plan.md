@@ -96,6 +96,7 @@ Order of building i expect :
     on the jobs list for the dispatcher ,has to be done in the backend not on frontend, indexing on db can help make these operations quick
 
     done, used claude code to speed up the process, updated old list methods in job.repository has filter options based on search, status, technicianid, date, sortingby, sorting order, pagination, page size, and include or exclude archives (soft deletes)
+
 7. bulk assigning and csv export (est 2 hr)
    bulk assigning, multiple jobs to the same techie, making sure no double booking happens, we have to avoid N + 1 problem here, 
 
@@ -105,6 +106,9 @@ Order of building i expect :
   update: 
   for dashbaord , i have findbystatus, find unassigned, assigned, find by techninician id, and find all from some day this one is greate, here i used raw sql queries as in prisam we cant directly truncate a timestamp into day, and without that we wont be able to use group by on the desired day, also refer ti the comment i wrote in the dashboard/repository to understand
 
+    update:
+    apis are now integreated with the ui
+    
 9. alerts (est 1.5 hr)
     alerts for late runnning jobs, when the scheduled ending is already passed. we also have to add a dismissed_at to keep track of when a alert was dismissed by techie
 
