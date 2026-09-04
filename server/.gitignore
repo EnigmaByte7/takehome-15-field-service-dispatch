@@ -7,3 +7,9 @@ node_modules
 .agents
 .claude
 .windsurf
+/dist
+/*.map
+/**/*.d.ts
+/**/*.js
+/**/*.js.map
+/**/*.d.ts.map

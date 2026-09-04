@@ -136,8 +136,8 @@ export async function exportDaySheet(date: string): Promise<string> {
       job.status,
     ];
   });
-
-  return toCsv([header, ...rows]);
+  return "incomplete right now..."
+  //return toCsv([header, ...rows]);
 }
 
 type TransitionResult = { success: true } | { success: false; reason: string };

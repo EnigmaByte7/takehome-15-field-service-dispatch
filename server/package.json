@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "build": "prisma generate && tsc",
+    "start": "node dist/index.ts"
   },
   "keywords": [],
   "author": "",

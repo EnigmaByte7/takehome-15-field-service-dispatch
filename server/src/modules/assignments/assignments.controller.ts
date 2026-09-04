@@ -6,6 +6,8 @@ export async function assignController(req: AuthedRequest, res: Response) {
   const { technicianId } = req.body;
   if (!technicianId) return res.status(400).json({ error: 'technicianId is required' });
 
+  if(!req.params.jobId || typeof req.params.jobId != 'string') return res.status(400).json({error: "missing jobid"})
+
   const result = await assignTechnician(req.user!, req.params.jobId, technicianId);
   if (!result.success) return res.status(409).json({ error: result.reason });
 
@@ -15,6 +17,8 @@ export async function assignController(req: AuthedRequest, res: Response) {
 export async function unassignController(req: AuthedRequest, res: Response) {
   const { technicianId } = req.body;
   if (!technicianId) return res.status(400).json({ error: 'technicianId is required' });
+
+  if(!req.params.jobId || typeof req.params.jobId != 'string') return res.status(400).json({error: "missing jobid"})
 
   const result = await unassignTechnician(req.user!, req.params.jobId, technicianId);
   return res.status(200).json(result);

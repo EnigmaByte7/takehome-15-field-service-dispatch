@@ -13,7 +13,7 @@ export function recordEvent(
   newValue?: string | null,
   client: Client = prisma
 ) {
-  return createEvent({ jobId, eventType, actorId, oldValue, newValue }, client);
+  return createEvent({ jobId, eventType, actorId, oldValue:oldValue ?? null, newValue: newValue ?? null }, client);
 }
 
 export async function getTimeline(actor: Actor, jobId: string) {
