@@ -57,3 +57,11 @@ status/technician/date filters, sorting, pagination with a total count, all serv
 "
 outcome: got working implementation for the filter operations
 corrections: ts errors , it was rejecting undefined in the filters object 
+
+
+Goal 6: integrate backend apis with a clean and useful UI 
+prompt:
+"
+    take design context from @plan.md, and @README.md and improve the ui in @client/src/pages, api clients are already available for use in @client/src/api 
+"
+outcome: got Dashboardpage Ui with charts and stat cards, and myjobs, jobs queue pages in client side

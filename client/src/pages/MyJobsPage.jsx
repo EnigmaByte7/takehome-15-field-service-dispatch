@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { 
-  Search, LogOut, Calendar, MapPin, Clock, User, 
+import {
+  Search, LogOut, Calendar, MapPin, Clock, User,
   AlertCircle, ChevronLeft, ChevronRight, Briefcase
 } from 'lucide-react';
 import { getJobs } from '../api/jobs';
@@ -12,6 +12,7 @@ export default function MyJobsPage() {
   const { user, logout } = useAuth();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [tab, setTab] = useState('active');
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['my-jobs', search, page],
@@ -65,6 +66,11 @@ export default function MyJobsPage() {
     });
   };
 
+  const allJobs = data?.jobs || [];
+  const activeJobs = allJobs.filter((j) => j.status !== 'completed');
+  const completedJobs = allJobs.filter((j) => j.status === 'completed');
+  const visibleJobs = tab === 'completed' ? completedJobs : activeJobs;
+
   const totalPages = Math.ceil((data?.total || 0) / (data?.pageSize || 20));
 
   return (
@@ -108,6 +114,29 @@ export default function MyJobsPage() {
           )}
         </div>
 
+        <div className="flex gap-2 border-b border-slate-200">
+          <button
+            onClick={() => setTab('active')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              tab === 'active'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            Active ({activeJobs.length})
+          </button>
+          <button
+            onClick={() => setTab('completed')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              tab === 'completed'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            Completed ({completedJobs.length})
+          </button>
+        </div>
+
         <div className="space-y-3">
           {isLoading ? (
             Array.from({ length: 3 }).map((_, i) => (
@@ -125,12 +154,12 @@ export default function MyJobsPage() {
               <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
               Failed to load assigned jobs.
             </div>
-          ) : data?.jobs?.length === 0 ? (
+          ) : visibleJobs.length === 0 ? (
             <div className="bg-white border border-slate-200 rounded-xl p-12 text-center text-slate-500">
-              No jobs assigned to you matching your query.
+              No {tab} jobs found{search ? ' matching your search' : ''}.
             </div>
           ) : (
-            data?.jobs.map((job) => (
+            visibleJobs.map((job) => (
               <Link
                 key={job.id}
                 to={`/jobs/${job.id}`}
@@ -167,7 +196,7 @@ export default function MyJobsPage() {
                     <div className="flex items-center gap-1 text-slate-500">
                       <User className="w-3.5 h-3.5 text-slate-400" />
                       <span>
-                        {job.assignments.length === 1 
+                        {job.assignments.length === 1
                           ? job.assignments[0].technician.email.split('@')[0]
                           : `${job.assignments.length} Technicians Assigned`}
                       </span>
@@ -179,7 +208,6 @@ export default function MyJobsPage() {
           )}
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="bg-white px-4 py-3 border border-slate-200 rounded-xl flex items-center justify-between text-xs text-slate-500 shadow-sm">
             <span>Page {page} of {totalPages}</span>
