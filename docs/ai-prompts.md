@@ -65,3 +65,10 @@ prompt:
     take design context from @plan.md, and @README.md and improve the ui in @client/src/pages, api clients are already available for use in @client/src/api 
 "
 outcome: got Dashboardpage Ui with charts and stat cards, and myjobs, jobs queue pages in client side
+
+Goal 7: integrate export to CSV functionality with the frontend,
+prompt: 
+"
+    find the toCSV method in @server/src/modules/jobs/jobs.controller.js,integrate the api for /export into the @client/src/pages/JobsPage.jsx
+"
+outcome: got a export to csv button on dashboard with a day selector to be sent to api

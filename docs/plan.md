@@ -98,7 +98,10 @@ Order of building i expect :
     done, used claude code to speed up the process, updated old list methods in job.repository has filter options based on search, status, technicianid, date, sortingby, sorting order, pagination, page size, and include or exclude archives (soft deletes)
 
 7. bulk assigning and csv export (est 2 hr)
-   bulk assigning, multiple jobs to the same techie, making sure no double booking happens, we have to avoid N + 1 problem here, 
+   bulk assigning, multiple jobs to the same techie, making sure no double booking happens,
+
+   update: added bulk assign and csv export to the client ui now,
+   for integrating bulk assigning, we have made a design change in ui, we now have a check box for unassignedtasks, clicking the checkbox allows us to assign multiple jobs and select a technician from a floating drop down menu in the bottom.that hits the /jobs/bulk-assign  with the jobids and technician id, and returns the result for each job id, if its success or failure
 
 8. dashboard (est 2 hr)
   apis to get stats like assigned, unassigned counts, running lates etc
@@ -108,7 +111,7 @@ Order of building i expect :
 
     update:
     apis are now integreated with the ui
-    
+
 9. alerts (est 1.5 hr)
     alerts for late runnning jobs, when the scheduled ending is already passed. we also have to add a dismissed_at to keep track of when a alert was dismissed by techie
 

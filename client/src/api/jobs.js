@@ -37,3 +37,14 @@ export function addPart(jobId, partName, quantity) {
 export function getTimeline(jobId) {
   return apiFetch(`/jobs/${jobId}/events`);
 }
+
+export function exportDaySheet(date) {
+  return apiFetch(`/jobs/export?date=${encodeURIComponent(date)}`);
+}
+
+export function bulkAssignJobs(jobIds, technicianId) {
+  return apiFetch('/jobs/bulk-assign', {
+    method: 'POST',
+    body: JSON.stringify({ jobIds, technicianId }),
+  });
+}

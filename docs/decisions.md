@@ -28,9 +28,9 @@ This decision is about the no double booking and no overlapping in assignment th
 
 ## Decision 4
 
-- **Chose:**
-- **Rejected:**
-- **Why:**
+- **Chose:**: i have to decided for a design change in the client ui for job assignment, we now have a check box for unassigned tasks, clicking the checkbox allows us to assign multiple jobs and select a technician from a floating drop down menu in the bottom.that hits the /jobs/bulk-assign  with the jobids and technician id, and returns the result for each job id, if its success or failure
+- **Rejected:**: assign technician button with a dropdown for each job 
+- **Why:**, this design is more intuitive and easy to understand for the user
 
 ## Decision 5
 
