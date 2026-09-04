@@ -12,11 +12,14 @@ import {
   transitionStatusController,
 } from './jobs.controller.js';
 
+import { bulkAssignController } from '../assignments/assignments.controller.js';
+
 const router = Router();
 
 router.use(authMiddleware);
 
 router.get('/export', requireRole('dispatcher'), exportDayController);
+router.post('/bulk-assign', requireRole('dispatcher'), bulkAssignController);
 
 router.get('/', listJobsController);
 router.get('/:jobId', getJobController);

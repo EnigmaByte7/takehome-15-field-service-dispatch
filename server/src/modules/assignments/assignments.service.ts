@@ -52,6 +52,21 @@ export async function assignTechnician(
   }
 }
 
+export async function bulkAssign(actor: Actor, jobIds: string[], technicianId: string) {
+  const results: { jobId: string; success: boolean; reason?: string }[] = [];
+ 
+  for (const jobId of jobIds) {
+    const result = await assignTechnician(actor, jobId, technicianId);
+    results.push(
+      result.success
+        ? { jobId, success: true }
+        : { jobId, success: false, reason: result.reason }
+    );
+  }
+ 
+  return results;
+}
+
 export async function unassignTechnician(
   actor: Actor,
   jobId: string,

@@ -1,6 +1,6 @@
 import type { Response } from 'express';
 import type { AuthedRequest } from '../../types/type.js';
-import { assignTechnician, unassignTechnician } from './assignments.service.js';
+import { assignTechnician, unassignTechnician,bulkAssign } from './assignments.service.js';
 
 export async function assignController(req: AuthedRequest, res: Response) {
   const { technicianId } = req.body;
@@ -23,3 +23,16 @@ export async function unassignController(req: AuthedRequest, res: Response) {
   const result = await unassignTechnician(req.user!, req.params.jobId, technicianId);
   return res.status(200).json(result);
 }
+
+export async function bulkAssignController(req: AuthedRequest, res: Response) {
+  const actor = req.user!;
+  const { jobIds, technicianId } = req.body;
+ 
+  if (!Array.isArray(jobIds) || jobIds.length === 0 || !technicianId) {
+    return res.status(400).json({ error: 'jobIds (non-empty array) and technicianId are required' });
+  }
+ 
+  const results = await bulkAssign(actor, jobIds, technicianId);
+  return res.status(200).json({ results });
+}
+ 

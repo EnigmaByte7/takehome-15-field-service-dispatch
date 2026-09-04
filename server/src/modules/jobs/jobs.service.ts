@@ -3,6 +3,7 @@ import * as jobsRepo from './jobs.repository.js';
 import * as partsRepo from '../parts/parts.repository.js';
 import { recordEvent } from '../events/events.service.js';
 import { isLegalTransition, type JobStatus } from './jobs.transitions.js';
+import { toCsv } from '../../lib/csv.js';
 
 type Actor = { userId: string; role: 'dispatcher' | 'technician' };
 
@@ -121,9 +122,9 @@ function formatTime(time: Date): string {
 
 export async function exportDaySheet(date: string): Promise<string> {
   const jobs = await jobsRepo.findJobsByDate(new Date(date));
-
+ 
   const header = ['Customer', 'Address', 'Technician(s)', 'Date', 'Start Time', 'Duration (min)', 'Status'];
-
+ 
   const rows = jobs.map((job) => {
     const technicians = job.assignments.map((a) => a.technician.email).join('; ') || 'Unassigned';
     return [
@@ -136,8 +137,8 @@ export async function exportDaySheet(date: string): Promise<string> {
       job.status,
     ];
   });
-  return "incomplete right now..."
-  //return toCsv([header, ...rows]);
+ 
+  return toCsv([header, ...rows]);
 }
 
 type TransitionResult = { success: true } | { success: false; reason: string };
