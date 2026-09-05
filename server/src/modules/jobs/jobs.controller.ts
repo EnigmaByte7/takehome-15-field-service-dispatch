@@ -75,7 +75,18 @@ export async function updateJobController(req: AuthedRequest, res: Response) {
   const { jobId } = req.params;
   if (typeof jobId !== 'string') return res.status(400).json({ error: 'Invalid job id' });
 
-  const updated = await jobsService.updateJobDetails(jobId, req.body);
+  const { customerName, siteAddress, description, priority, scheduledDate, startTime, estimatedDurationMinutes } = req.body;
+
+  const data: Record<string, unknown> = {};
+  if (customerName !== undefined) data.customerName = customerName;
+  if (siteAddress !== undefined) data.siteAddress = siteAddress;
+  if (description !== undefined) data.description = description;
+  if (priority !== undefined) data.priority = priority;
+  if (scheduledDate !== undefined) data.scheduledDate = new Date(scheduledDate);
+  if (startTime !== undefined) data.startTime = new Date(startTime);
+  if (estimatedDurationMinutes !== undefined) data.estimatedDurationMinutes = estimatedDurationMinutes;
+
+  const updated = await jobsService.updateJobDetails(jobId, data);
   return res.status(200).json(updated);
 }
 

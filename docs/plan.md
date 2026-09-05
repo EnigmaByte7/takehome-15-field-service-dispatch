@@ -140,7 +140,7 @@ this order as u can tell starts from the ground up, laying the foundatoins with 
 right now, theres no reassigning logic for job as of now, so its kind of incomplete for now..., asit will require some changes in jobs repo, and i may not be able to wrap eveything before time
 
 ## estimated vs actual time,
-i assumed about 18+ hours, some parts took less than that time, like deployment, seeding, jobs crud, dashboard, auth got completed fairly quickly, some parts however like bulk assign and csv and no double booking logic required some research so it took maybe half or more hour..., still things get completed in under 16 or so hours. the extra time is also because of my poor health at the time of working
+i assumed about 18+ hours, some parts took less than that time, like deployment, seeding, jobs crud, dashboard, auth got completed fairly quickly, some parts however like bulk assign and csv and no double booking logic required some research so it took maybe half or more hour..., for ui part, ai helped me put things together quickly, still things get completed in under 16 or so hours. the extra time is also because of my poor health at the time of working
 
 
 i will keep making changes to the plan, and also add outcomes of each session as i progress

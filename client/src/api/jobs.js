@@ -48,3 +48,22 @@ export function bulkAssignJobs(jobIds, technicianId) {
     body: JSON.stringify({ jobIds, technicianId }),
   });
 }
+
+export function updateJob(jobId, data) {
+  return apiFetch(`/jobs/${jobId}`, { method: 'PATCH', body: JSON.stringify(data) });
+}
+
+export function archiveJob(jobId) {
+  return apiFetch(`/jobs/${jobId}/archive`, { method: 'POST' });
+}
+
+export function restoreJob(jobId) {
+  return apiFetch(`/jobs/${jobId}/restore`, { method: 'POST' });
+}
+
+export function unassignTechnician(jobId, technicianId) {
+  return apiFetch(`/jobs/${jobId}/assignments`, {
+    method: 'DELETE',
+    body: JSON.stringify({ technicianId }),
+  });
+}

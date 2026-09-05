@@ -1,20 +1,36 @@
 import { useState } from 'react';
-import { useParams, Link,useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { 
-  ArrowLeft, Calendar, Clock, MapPin, User, AlertCircle, 
-  CheckCircle2, Wrench, UserPlus, FileText, Package, Activity,
-  ChevronRight, Play
+import {
+  ArrowLeft, Calendar, Clock, MapPin, User, AlertCircle,
+  CheckCircle2, UserPlus, Package, Activity,
+  ChevronRight, Play, Pencil, X
 } from 'lucide-react';
-import { getJob, getTimeline, transitionStatus, addPart, assignTechnician } from '../api/jobs';
+import { getJob, getTimeline, transitionStatus, addPart, assignTechnician, updateJob } from '../api/jobs';
 import { getTechnicians } from '../api/users';
 import { useAuth } from '../context/AuthContext';
+import {
+ Archive, ArchiveRestore
+} from 'lucide-react';
+import {archiveJob, restoreJob } from '../api/jobs';
 
 const NEXT_STATUS = {
   assigned: 'en_route',
   en_route: 'on_site',
   on_site: 'completed',
 };
+
+const PRIORITIES = ['low', 'medium', 'high', 'urgent'];
+
+function toDateInputValue(dateStr) {
+  if (!dateStr) return '';
+  return new Date(dateStr).toISOString().slice(0, 10);
+}
+
+function toTimeInputValue(dateStr) {
+  if (!dateStr) return '';
+  return new Date(dateStr).toISOString().slice(11, 16);
+}
 
 export default function JobDetailPage() {
   const navigate = useNavigate();
@@ -27,6 +43,9 @@ export default function JobDetailPage() {
   const [technicianId, setTechnicianId] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
 
   const { data: job, isLoading: jobLoading } = useQuery({
     queryKey: ['job', id],
@@ -65,6 +84,23 @@ export default function JobDetailPage() {
     }
   }
 
+  async function handleArchiveToggle() {
+    setError('');
+    setIsSubmitting(true);
+    try {
+      if (job.archivedAt) {
+        await restoreJob(id);
+      } else {
+        await archiveJob(id);
+      }
+      refresh();
+    } catch (err) {
+      setError(err.message || 'Failed to update archive status');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   async function handleAddPart(e) {
     e?.preventDefault();
     if (!partName.trim()) return;
@@ -94,6 +130,32 @@ export default function JobDetailPage() {
       setError(err.message || 'Failed to assign technician');
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleEditSubmit(e) {
+    e.preventDefault();
+    setEditError('');
+    setIsSavingEdit(true);
+    const form = new FormData(e.currentTarget);
+    const scheduledDate = form.get('scheduledDate');
+    const startTime = form.get('startTime');
+    try {
+      await updateJob(id, {
+        customerName: form.get('customerName'),
+        siteAddress: form.get('siteAddress'),
+        description: form.get('description'),
+        priority: form.get('priority'),
+        scheduledDate,
+        startTime: `${scheduledDate}T${startTime}:00`,
+        estimatedDurationMinutes: Number(form.get('duration')),
+      });
+      setShowEditModal(false);
+      refresh();
+    } catch (err) {
+      setEditError(err.message || 'Failed to update job');
+    } finally {
+      setIsSavingEdit(false);
     }
   }
 
@@ -172,8 +234,9 @@ export default function JobDetailPage() {
     <div className="min-h-screen bg-slate-50/50 pb-12">
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-4">
-           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => navigate(-1)}
@@ -183,15 +246,47 @@ export default function JobDetailPage() {
               <ArrowLeft className="w-5 h-5" />
             </button>
           </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-slate-900">{job.customerName}</h1>
-                {getStatusBadge(job.status)}
-              </div>
-              <p className="text-xs text-slate-500 truncate max-w-md">{job.siteAddress}</p>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-bold text-slate-900">{job.customerName}</h1>
+              {getStatusBadge(job.status)}
+              {job.archivedAt && (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border bg-slate-100 text-slate-500 border-slate-200">
+                  Archived
+                </span>
+              )}
             </div>
+            <p className="text-xs text-slate-500 truncate max-w-md">{job.siteAddress}</p>
           </div>
-          <div>{getPriorityBadge(job.priority)}</div>
+        </div>
+        <div className="flex items-center gap-3">
+          {user?.role === 'dispatcher' && (
+            <>
+              <button
+                type="button"
+                onClick={() => { setEditError(''); setShowEditModal(true); }}
+                className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-slate-100 border border-slate-200"
+              >
+                <Pencil className="w-3.5 h-3.5" /> Edit Job
+              </button>
+              <button
+                type="button"
+                onClick={handleArchiveToggle}
+                disabled={isSubmitting}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors border disabled:opacity-50 ${
+                  job.archivedAt
+                    ? 'text-emerald-700 border-emerald-200 hover:bg-emerald-50'
+                    : 'text-red-600 border-red-200 hover:bg-red-50'
+                }`}
+              >
+                {job.archivedAt
+                  ? <><ArchiveRestore className="w-3.5 h-3.5" /> Restore Job</>
+                  : <><Archive className="w-3.5 h-3.5" /> Archive Job</>}
+              </button>
+            </>
+          )}
+          {getPriorityBadge(job.priority)}
+        </div>
         </div>
       </header>
 
@@ -450,6 +545,128 @@ export default function JobDetailPage() {
           </div>
         </div>
       </main>
+
+      {showEditModal && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl relative border border-slate-100">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-lg font-bold text-slate-900">Edit Job</h2>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {editError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm mb-4 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{editError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Customer Name</label>
+                <input
+                  name="customerName"
+                  required
+                  defaultValue={job.customerName}
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Site Address</label>
+                <input
+                  name="siteAddress"
+                  required
+                  defaultValue={job.siteAddress}
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Description</label>
+                <textarea
+                  name="description"
+                  required
+                  rows="2"
+                  defaultValue={job.description}
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                ></textarea>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Priority</label>
+                  <select
+                    name="priority"
+                    defaultValue={job.priority}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                  >
+                    {PRIORITIES.map((p) => (
+                      <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Duration (Mins)</label>
+                  <input
+                    name="duration"
+                    type="number"
+                    min="1"
+                    required
+                    defaultValue={job.estimatedDurationMinutes}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+              </div>
+                    <p>IMPORTANT: FOR NOW JOB RESCHEDULE IS NOT IMPLEMENTED</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Scheduled Date</label>
+                  <input
+                    name="scheduledDate"
+                    type="date"
+                    required
+                    defaultValue={toDateInputValue(job.scheduledDate)}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Start Time</label>
+                  <input
+                    name="startTime"
+                    type="time"
+                    required
+                    defaultValue={toTimeInputValue(job.startTime)}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-50 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingEdit}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+                >
+                  {isSavingEdit ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

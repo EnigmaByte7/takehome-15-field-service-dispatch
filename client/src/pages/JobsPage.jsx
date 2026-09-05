@@ -31,6 +31,7 @@ export default function JobsPage() {
   const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
 
   const [exportDate, setExportDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [isExporting, setIsExporting] = useState(false);
@@ -40,7 +41,7 @@ export default function JobsPage() {
   const [isBulkSubmitting, setIsBulkSubmitting] = useState(false);
   const [bulkResults, setBulkResults] = useState(null);
 
-  const filters = { search, status, technicianId, date, sortBy, sortOrder, page };
+  const filters = { search, status, technicianId, date, sortBy, sortOrder, page, showArchived };
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['jobs', filters],
@@ -50,6 +51,7 @@ export default function JobsPage() {
         ...(status ? { status } : {}),
         ...(technicianId ? { technicianId } : {}),
         ...(date ? { date } : {}),
+        ...(showArchived ? { archived: 'true' } : {}),
         sortBy,
         sortOrder,
         page,
@@ -76,6 +78,7 @@ export default function JobsPage() {
     setDate('');
     setSortBy('scheduledDate');
     setSortOrder('asc');
+    setShowArchived(false);
     setPage(1);
   }
 
@@ -181,7 +184,7 @@ export default function JobsPage() {
   };
 
   const totalPages = Math.ceil((data?.total || 0) / (data?.pageSize || 20));
-  const hasActiveFilters = search || status || technicianId || date;
+  const hasActiveFilters = search || status || technicianId || date || showArchived;
 
   const unassignedOnPage = data?.jobs?.filter((j) => j.status === 'unassigned') ?? [];
   const allSelected = unassignedOnPage.length > 0 && unassignedOnPage.every((j) => selectedJobIds.has(j.id));
@@ -279,6 +282,16 @@ export default function JobsPage() {
               onChange={(e) => updateFilter(setDate)(e.target.value)}
               className="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700"
             />
+
+            <label className="flex items-center gap-2 text-sm text-slate-600 px-3 py-2 border border-slate-200 rounded-lg bg-white cursor-pointer select-none whitespace-nowrap">
+              <input
+                type="checkbox"
+                checked={showArchived}
+                onChange={(e) => updateFilter(setShowArchived)(e.target.checked)}
+                className="rounded border-slate-300"
+              />
+              Show archived
+            </label>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -385,7 +398,16 @@ export default function JobsPage() {
                         </div>
                       </td>
                       <td className="py-3.5 px-4">{getPriorityBadge(job.priority)}</td>
-                      <td className="py-3.5 px-4">{getStatusBadge(job.status)}</td>
+                      <td className="py-3.5 px-4">
+                        <div className="flex flex-wrap items-center gap-1">
+                          {getStatusBadge(job.status)}
+                          {job.archivedAt && (
+                            <span className="inline-block px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-500 border border-slate-200">
+                              Archived
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td className="py-3.5 px-4 text-slate-600">
                         <div className="flex items-center gap-1 text-xs">
                           <Calendar className="w-3.5 h-3.5 text-slate-400" />
@@ -592,4 +614,4 @@ export default function JobsPage() {
       )}
     </div>
   );
-}
+} 
