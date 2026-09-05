@@ -34,6 +34,6 @@ This decision is about the no double booking and no overlapping in assignment th
 
 ## Decision 5
 
-- **Chose:**
-- **Rejected:**
-- **Why:**
+- **Chose:**: for alerts module, is a simple lazy read, for all jobs windows to check if scehduledTime < now(), 
+- **Rejected:**: a schduled worker or a cron job that  repeatedly checks for alerts in the jobs to find alerts,
+- **Why:**:a simple get endpoint for finding alerts is easier and fast, than implementing a job runner infrastructure, also it does not require  a 100% realtime solution for this case

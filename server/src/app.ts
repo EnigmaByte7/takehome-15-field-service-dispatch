@@ -7,6 +7,7 @@ import assignmentsRoutes from './modules/assignments/assignments.routes.js';
 import eventsRoutes from './modules/events/events.routes.js';
 import dashboardRoutes from './modules/dashboard/dashboard.routes.js';
 import technicianRoutes from './modules/users/users.routes.js'
+import alertsRoutes from './modules/alerts/alerts.routes.js'
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use('/api/jobs/:jobId/assignments', assignmentsRoutes);
 app.use('/api/jobs/:jobId/events', eventsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/users/', technicianRoutes);
-
+app.use('/api/alerts', alertsRoutes);
 //added a health endpoint
 app.get('/', (req, res) => res.status(200).send("Server Running..."))
 

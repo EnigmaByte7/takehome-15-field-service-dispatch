@@ -78,33 +78,3 @@ export async function unassignTechnician(
     return { success: true };
   });
 }
-
-//again at assignment schedule edit also we must check for overlapping
-export async function resyncAssignmentWindows(jobId: string): Promise<Result> {
-  return prisma.$transaction(async (tx) => {
-    const job = await repo.findJobForAssignment(jobId, tx);
-    if (!job) return { success: false, reason: 'Job not found' };
-
-    const newWindow = getWindow(job.scheduledDate, job.startTime, job.estimatedDurationMinutes);
-    const assignments = await repo.findActiveAssignmentsForJob(jobId, tx);
-
-    for (const a of assignments) {
-      const others = await repo.findActiveAssignmentsForTechnician(a.technicianId, jobId, tx);
-      const conflict = others.some((o) =>
-        windowsOverlap(newWindow.start, newWindow.end, o.windowStart, o.windowEnd)
-      );
-      if (conflict) {
-        return {
-          success: false,
-          reason: 'Rescheduling would double-book an already-assigned technician',
-        };
-      }
-    }
-
-    for (const a of assignments) {
-      await repo.updateAssignmentWindow(a.id, newWindow.start, newWindow.end, tx);
-    }
-
-    return { success: true };
-  });
-}

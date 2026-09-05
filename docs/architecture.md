@@ -63,4 +63,4 @@ i assume dispatcher is logged in, and has a job available and atleast one techni
 + also in the case the db EXCLUDE constraint (i discussed about this in plan.md and in descisions.md too) fails, it returns the same error message to client
 
 ## 4. what did u decide not to build ?
-i think i may not be able to complete alerts module..., the folders are here, but if i ran ouut of time, i may have to leave it for good 
+the job windo resheduling, i may have to skip it for now.. i know how it works and how i can implment it, but that will require some changes in the current jobs modules, and i think i might not be able to complete it by evening today, so its best to skip it for good and focus on other modules to refine them

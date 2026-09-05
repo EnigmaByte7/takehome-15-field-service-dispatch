@@ -10,6 +10,7 @@ import { getJobs, createJob, exportDaySheet, bulkAssignJobs } from '../api/jobs'
 import { getTechnicians } from '../api/users';
 import { useAuth } from '../context/AuthContext';
 import { downloadCsv } from '../lib/download';
+import AlertBell from '../components/AlertBell';
 
 const STATUS_OPTIONS = ['unassigned', 'assigned', 'en_route', 'on_site', 'completed'];
 const SORT_OPTIONS = [
@@ -213,6 +214,7 @@ export default function JobsPage() {
                 <Download className="w-3.5 h-3.5" /> {isExporting ? 'Exporting...' : 'Export CSV'}
               </button>
             </div>
+            <AlertBell />
             <Link
               to="/dashboard"
               className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-slate-100"

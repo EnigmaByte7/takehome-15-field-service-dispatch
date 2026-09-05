@@ -106,6 +106,7 @@ model JobEvent {
 model Alert {
   id               String    @id @default(uuid())
   jobId            String
+  windowEnd        DateTime
   createdAt        DateTime  @default(now())
   dismissedAt      DateTime?
   reappearedFromId String?

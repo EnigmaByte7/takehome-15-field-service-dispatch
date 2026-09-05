@@ -6,6 +6,7 @@ import JobsPage from './pages/JobsPage';
 import MyJobsPage from './pages/MyJobsPage';
 import JobDetailPage from './pages/JobDetailPage';
 import DashboardPage from './pages/DashboardPage';
+import AlertsPage from './pages/AlertsPage';
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/alerts"
+        element={
+          <ProtectedRoute>
+            <AlertsPage />
           </ProtectedRoute>
         }
       />

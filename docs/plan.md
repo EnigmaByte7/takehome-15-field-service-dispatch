@@ -43,7 +43,7 @@ Auth: JWT to handle role based control and auth
 Hosting: DB on Neon, Frontend on Vercel and Backend on Express
 Tools: postman for api testing, claude code cli (with gemini as backend) for productivity
 
-Order of building i expect :
+## Order of building i expect , estimated time for each  and details:
 
 1. DB Setup and schema (est : 2 hr)
    Having all tables and db ready will help keep track of the core app logic and data layer
@@ -115,6 +115,15 @@ Order of building i expect :
 9. alerts (est 1.5 hr)
     alerts for late runnning jobs, when the scheduled ending is already passed. we also have to add a dismissed_at to keep track of when a alert was dismissed by techie
 
+    update: 
+    implemented alerts, below is the entire explaination of how i implemented it, and how it works...>
+
+    the GET on /alerts runs to find all jobs that have status not completed and its scheduledEndTime < now(),if the therea already a alert row, then it skips otherwise creates a alert rowfor that window , and finally returns all alerts that have dismissed_at as NULL
+
+    dismissing a alert, just sets the dismissed_at as Now()
+
+    for the rescheduling case, after rescheduling, the job will get a new schedule, therefore, the 'windowEnd' column will update in alert, thats why we added migrationfor this column, so a new alert will now be created this time after comparing the new endtime, and creates a new alert row with dismissed_at null and reappared_from_id set as previous alert's id
+
 10.  seed, test, deploy (est 2.5 hr)
     at last, we can seed test data, and test it manually and maybe write some tests if time is left... and finally deploy
 
@@ -124,4 +133,15 @@ Order of building i expect :
 11. integrate with client side
 update: added a new module users to get technicians details for thhe frontend
 
+## why i picked this order
+this order as u can tell starts from the ground up, laying the foundatoins with the db schema and data layer to setup a ground, then setup auth to setup the policy layers, and then incrementally work our way to implement actual features, and apis, and later on move to client and ui side. as here, each layer depends on the previous working layer thats why
+
+## things i left out by choice
+right now, theres no reassigning logic for job as of now, so its kind of incomplete for now..., asit will require some changes in jobs repo, and i may not be able to wrap eveything before time
+
+## estimated vs actual time,
+i assumed about 18+ hours, some parts took less than that time, like deployment, seeding, jobs crud, dashboard, auth got completed fairly quickly, some parts however like bulk assign and csv and no double booking logic required some research so it took maybe half or more hour..., still things get completed in under 16 or so hours. the extra time is also because of my poor health at the time of working
+
+
 i will keep making changes to the plan, and also add outcomes of each session as i progress
+
