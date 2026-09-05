@@ -73,3 +73,5 @@ apart from that, there is a lack of proper input / output validation in frontend
 the auth token gets saved directly into localstorage, ok for a prototype, but can later use cookies, and also work on refresh tokens
 
 there are no test files as of now
+
+also the ui is currently not responsive in design
